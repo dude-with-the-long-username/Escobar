@@ -59,7 +59,9 @@ cursor.execute('''
         pat_id INTEGER,
         drug_id INTEGER,
         dosage INTEGER,
-        date TEXT
+        date TEXT,
+        FOREIGN KEY (pat_id) REFERENCES patients(id),
+        FOREIGN KEY (drug_id) REFERENCES drugs(id)
     )
 ''')
 
