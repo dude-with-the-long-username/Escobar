@@ -17,7 +17,7 @@ cursor.execute('''
         addressline1 TEXT,
         addressline2 TEXT,
         city TEXT,
-        phone_number TEXT NOT NULL CHECK (LENGTH(phone_number) = 10) 
+        phone_number TEXT CHECK (LENGTH(phone_number) = 10) 
     );
 ''')
 
@@ -25,7 +25,7 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS doctors (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        phone_number TEXT NOT NULL CHECK (LENGTH(phone_number) = 10) 
+        phone_number TEXT CHECK (LENGTH(phone_number) = 10) 
     );
 ''')
 
