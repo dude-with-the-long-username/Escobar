@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from common_functions import * # another file in same directory
 
 db = sqlite3.connect('pharmacy.sqlite')
 cursor = db.cursor()
@@ -46,20 +47,26 @@ while(1):
             elif pat_menu_choice == 3:
                 print('\n   List of all patients:\n')
                 cursor.execute('''SELECT * FROM patients''')
-                print('\tid\tname\taddress\t\tphone_number')
+                print('\t\tid\t\tname\t\taddress\t\t\tphone_number')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}\t\t{row[2]}\t\t{row[3]}')
                 print('\n\nEnter id of patient you want to delete: ')
                 pat_delete_id = input()
-                cursor.execute('''DELETE FROM patients WHERE id =?;''',(pat_delete_id))
-                db.commit()
-                print('\npatient successfully deleted!\n')
+                print('Deleting a patient will also delete their associated prescriptions')
+                print('Selected patient has following prescriptions:\n')
+                list_prescriptions_by_pat_id(pat_delete_id)
+                print('Are you sure you want to delete this patient? (y/n)')
+                response=input()
+                if response == 'y':
+                    cursor.execute('''DELETE FROM patients WHERE id =?;''',(pat_delete_id))
+                    db.commit()
+                    print('\npatient successfully deleted!\n')
             elif pat_menu_choice == 4:
                 print('\n   The patients are:\n')
                 cursor.execute('''SELECT * FROM patients''')
-                print('\tid\tname\taddress\t\tphone_number')
+                print('\t\tid\t\tname\t\taddress\t\t\tphone_number')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}\t\t{row[2]}\t\t{row[3]}')
                 print('\n\n')
             elif pat_menu_choice == 5:
                 break
@@ -91,20 +98,25 @@ while(1):
             elif drug_menu_choice == 3:
                 print('\n   List of all drugs:\n')
                 cursor.execute('''SELECT * FROM drugs''')
-                print('\tid\tname\tprice\t\tquantity')
+                print('\t\tid\t\tname\t\tprice\t\t\t\tquantity')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}\t\t{row[2]}\t\t{row[3]}')
                 print('\n\nEnter id of drugs you want to delete: ')
                 drug_delete_id = input()
-                cursor.execute('''DELETE FROM drugs WHERE id =?;''',(drug_delete_id))
-                db.commit()
-                print('\ndrugs successfully deleted!\n')
+                print('Selected drug is present in following prescriptions:\n')
+                list_prescriptions_by_drug_id(drug_delete_id)
+                print('Are you sure you want to delete this drug? (y/n)')
+                response=input()
+                if response == 'y':
+                    cursor.execute('''DELETE FROM drugs WHERE id =?;''',(drug_delete_id))
+                    db.commit()
+                    print('\ndrug successfully deleted!\n')
             elif drug_menu_choice == 4:
                 print('\n   The drugs are:\n')
                 cursor.execute('''SELECT * FROM drugs''')
-                print('\tid\tname\tprice\t\tquantity')
+                print('\t\tid\t\tname\t\tprice\t\t\t\tquantity')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}\t\t{row[2]}\t\t{row[3]}')
                 print('\n\n')
             elif drug_menu_choice == 5:
                 break
@@ -124,17 +136,17 @@ while(1):
             if prescription_menu_choice == 1:
                 print('\n   List of all patients:\n')
                 cursor.execute('''SELECT * FROM patients''')
-                print('\tid\tname\taddress\t\tphone_number')
+                print('\t\tid\t\tname\t\taddress\t\t\tphone_number')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}\t\t{row[2]}\t\t{row[3]}')
                 print('\n\nEnter id of patient against whom you want to add prescription: ')
                 presc_pat_id = input()
 
                 print('\n   List of all drugs:\n')
                 cursor.execute('''SELECT * FROM drugs''')
-                print('\tid\tname')
+                print('\t\tid\t\tname')
                 for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}')
+                    print(f'\t\t{row[0]}\t\t{row[1]}')
                 print('\n\nEnter id of drugs you want to add in prescription: ')
                 presc_drug_id = input()
 
@@ -152,47 +164,14 @@ while(1):
                 db.commit()
                 print("prescription successfully added!\n")
             elif prescription_menu_choice == 3:
-                print('\n   List of all prescriptions:\n')
-                cursor.execute('''
-                                    SELECT 
-                                        presc.id
-                                        , pat.name
-                                        , drug.name
-                                        , presc.dosage
-                                        , presc.date
-                                    FROM prescriptions presc
-                                        INNER JOIN patients pat
-                                            ON presc.pat_id = pat.id
-                                        INNER JOIN drugs drug
-                                            ON drug.id = presc.drug_id
-                                ''')
-                print('\tid\tpatient\tdrug\tdosage\tdate')
-                for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}\t{row[4]}')
+                list_all_prescriptions()
                 print('\n\nEnter id of prescriptions you want to delete: ')
                 prescription_delete_id = input()
                 cursor.execute('''DELETE FROM prescriptions WHERE id =?;''',(prescription_delete_id))
                 db.commit()
                 print('\nprescriptions successfully deleted!\n')
             elif prescription_menu_choice == 4:
-                print('\n   The prescriptions are:\n')
-                cursor.execute('''
-                                    SELECT 
-                                        presc.id
-                                        , pat.name
-                                        , drug.name
-                                        , presc.dosage
-                                        , presc.date
-                                    FROM prescriptions presc
-                                        INNER JOIN patients pat
-                                            ON presc.pat_id = pat.id
-                                        INNER JOIN drugs drug
-                                            ON drug.id = presc.drug_id
-                                ''')
-                print('\tid\tpatient\tdrug\tdosage\tdate')
-                for row in cursor:
-                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}\t{row[4]}')
-                print('\n\n')
+                list_all_prescriptions()
             elif prescription_menu_choice == 5:
                 break
             else:
