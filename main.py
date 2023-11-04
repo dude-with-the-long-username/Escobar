@@ -64,7 +64,52 @@ while(1):
                 break
             else:
                 print('Enter a valid choice!\n')
-    elif main_menu_choice == 7:
+    elif main_menu_choice == 4: # drugs
+        while(1):
+            print(' What would you like to do?')
+            print(' 1. Add drug')
+            print(' 2. Update drug')
+            print(' 3. Delete drug')
+            print(' 4. View drug details')
+            print(' 5. Go to previous menu')
+            print(' \nEnter your choice:')
+
+            drug_menu_choice = int(input())
+            if drug_menu_choice == 1:
+                print('\n   Enter drugs name:')
+                drug_name = str(input())
+                print('\n   Enter price:')
+                drug_price = str(input())
+                print('\n   Enter quantity:')
+                drug_quantity = str(input())
+                cursor.execute('''INSERT INTO 
+                                        drugs(name,price,quantity)
+                                    VALUES(?,?,?)''', (drug_name,drug_price,drug_quantity))
+                db.commit()
+                print("drugs successfully added!\n")
+            elif drug_menu_choice == 3:
+                print('\n   List of all drugs:\n')
+                cursor.execute('''SELECT * FROM drugs''')
+                print('\tid\tname\tprice\t\tquantity')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                print('\n\nEnter id of drugs you want to delete: ')
+                drug_delete_id = input()
+                cursor.execute('''DELETE FROM drugs WHERE id =?;''',(drug_delete_id))
+                db.commit()
+                print('\ndrugs successfully deleted!\n')
+            elif drug_menu_choice == 4:
+                print('\n   The drugs are:\n')
+                cursor.execute('''SELECT * FROM drugs''')
+                print('\tid\tname\tprice\t\tquantity')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                print('\n\n')
+            elif drug_menu_choice == 5:
+                break
+            else:
+                print('Enter a valid choice!\n')
+    elif main_menu_choice == 7: # exit
         break
     else:
         print('Enter a valid choice!\n')

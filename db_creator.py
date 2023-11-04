@@ -39,7 +39,6 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS drugs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        description TEXT,
         price INTEGER,
         quantity INTEGER,
         manufacturer_id INTEGER
