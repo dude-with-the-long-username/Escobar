@@ -42,6 +42,17 @@ while(1):
                                     VALUES(?,?,?)''', (pat_name,pat_addr,pat_phone))
                 db.commit()
                 print("patient successfully added!\n")
+            elif pat_menu_choice == 3:
+                print('\n   List of all patients:\n')
+                cursor.execute('''SELECT * FROM patients''')
+                print('\tid\tname\taddress\t\tphone_number')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                print('\n\nEnter id of patient you want to delete: ')
+                pat_delete_id = input()
+                cursor.execute('''DELETE FROM patients WHERE id =?;''',(pat_delete_id))
+                db.commit()
+                print('\npatient successfully deleted!\n')
             elif pat_menu_choice == 4:
                 print('\n   The patients are:\n')
                 cursor.execute('''SELECT * FROM patients''')

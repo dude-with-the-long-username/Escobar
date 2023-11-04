@@ -14,9 +14,7 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS patients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        addressline1 TEXT,
-        addressline2 TEXT,
-        city TEXT,
+        address TEXT,
         phone_number TEXT CHECK (LENGTH(phone_number) = 10) 
     );
 ''')
