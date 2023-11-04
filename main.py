@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 db = sqlite3.connect('pharmacy.sqlite')
 cursor = db.cursor()
@@ -109,6 +110,94 @@ while(1):
                 break
             else:
                 print('Enter a valid choice!\n')
+    elif main_menu_choice == 6: # prescription
+        while(1):
+            print(' What would you like to do?')
+            print(' 1. Add prescription')
+            print(' 2. Update prescription')
+            print(' 3. Delete prescription')
+            print(' 4. View prescription details')
+            print(' 5. Go to previous menu')
+            print(' \nEnter your choice:')
+
+            prescription_menu_choice = int(input())
+            if prescription_menu_choice == 1:
+                print('\n   List of all patients:\n')
+                cursor.execute('''SELECT * FROM patients''')
+                print('\tid\tname\taddress\t\tphone_number')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}')
+                print('\n\nEnter id of patient against whom you want to add prescription: ')
+                presc_pat_id = input()
+
+                print('\n   List of all drugs:\n')
+                cursor.execute('''SELECT * FROM drugs''')
+                print('\tid\tname')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}')
+                print('\n\nEnter id of drugs you want to add in prescription: ')
+                presc_drug_id = input()
+
+                print('Enter dosage:')
+                presc_dosage=input()
+
+                print('Enter date in YYYY-MM-DD format (leave blank to enter today''s date):')
+                presc_date=input()
+                if presc_date == '':
+                    presc_date = str(datetime.date.today())
+
+                cursor.execute('''INSERT INTO 
+                                        prescriptions(pat_id,drug_id,dosage,date)
+                                    VALUES(?,?,?,?)''', (presc_pat_id,presc_drug_id,presc_dosage,presc_date))
+                db.commit()
+                print("prescription successfully added!\n")
+            elif prescription_menu_choice == 3:
+                print('\n   List of all prescriptions:\n')
+                cursor.execute('''
+                                    SELECT 
+                                        presc.id
+                                        , pat.name
+                                        , drug.name
+                                        , presc.dosage
+                                        , presc.date
+                                    FROM prescriptions presc
+                                        INNER JOIN patients pat
+                                            ON presc.pat_id = pat.id
+                                        INNER JOIN drugs drug
+                                            ON drug.id = presc.drug_id
+                                ''')
+                print('\tid\tpatient\tdrug\tdosage\tdate')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}\t{row[4]}')
+                print('\n\nEnter id of prescriptions you want to delete: ')
+                prescription_delete_id = input()
+                cursor.execute('''DELETE FROM prescriptions WHERE id =?;''',(prescription_delete_id))
+                db.commit()
+                print('\nprescriptions successfully deleted!\n')
+            elif prescription_menu_choice == 4:
+                print('\n   The prescriptions are:\n')
+                cursor.execute('''
+                                    SELECT 
+                                        presc.id
+                                        , pat.name
+                                        , drug.name
+                                        , presc.dosage
+                                        , presc.date
+                                    FROM prescriptions presc
+                                        INNER JOIN patients pat
+                                            ON presc.pat_id = pat.id
+                                        INNER JOIN drugs drug
+                                            ON drug.id = presc.drug_id
+                                ''')
+                print('\tid\tpatient\tdrug\tdosage\tdate')
+                for row in cursor:
+                    print(f'\t{row[0]}\t{row[1]}\t{row[2]}\t{row[3]}\t{row[4]}')
+                print('\n\n')
+            elif prescription_menu_choice == 5:
+                break
+            else:
+                print('Enter a valid choice!\n')
+
     elif main_menu_choice == 7: # exit
         break
     else:
