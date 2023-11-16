@@ -65,5 +65,18 @@ cursor.execute('''
     )
 ''')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pat_id INTEGER,
+        date TEXT,
+        drug_id INTEGER,
+        quantity INTEGER,
+        price INTEGER,
+        FOREIGN KEY (pat_id) REFERENCES patients(id),
+        FOREIGN KEY (drug_id) REFERENCES drugs(id)
+    )
+''')
+
 connection.close()
 
